@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity-mappings
+	xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm
+                                     http://xmlns.jcp.org/xml/ns/persistence/orm_2_2.xsd"
+	version="2.2">
+	
+	<named-native-query name="queries.user.findUsersCreatedToday"
+	                 result-class="com.learn.hibernate.entity.UserEntity">		
+		<query>
+			 <![CDATA[
+			    SELECT * FROM user_app WHERE DATE(created_at) = CURRENT_DATE
+			 ]]>
+		</query>
+	</named-native-query>
+		 
+	<named-native-query name="queries.user.findUsersCreatedByYear"
+	                 result-class="com.learn.hibernate.entity.UserEntity">		
+		<query>
+			 <![CDATA[
+			    SELECT * FROM user_app WHERE date_part('year', created_at) = :year
+			 ]]>
+		</query>
+	</named-native-query>
+	
+	
+</entity-mappings>
