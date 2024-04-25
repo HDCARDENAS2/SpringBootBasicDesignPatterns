@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
-    private final JmsMessagingCustom jmsMessagingCustom;
+
     
     public UserServiceImpl(
     		UserMapper userMapper,
@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
         this.userMapper = userMapper;
 		this.userRepository = userRepository;
 		this.eventPublisher = eventPublisher;
-		this.jmsMessagingCustom = jmsMessagingCustom;
+	
     }
 
     @Override
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userMapper.toEntity(userDTO);
         UserEntity savedUserEntity = userRepository.save(userEntity);
         UserDTO savedUserDTO = userMapper.toDTO(savedUserEntity);
-        jmsMessagingCustom.send(savedUserDTO.getName());
+        //TODO send JMS
         eventPublisher.publishEvent(new UserCreatedEvent(this, savedUserDTO));
         log.info("Exiting save method with savedUserDTO: {}", savedUserDTO);
         return savedUserDTO;
@@ -78,4 +78,6 @@ public class UserServiceImpl implements UserService {
         log.info("Exiting findUsersCreatedToday method with userDTOs: {}", userDTOs);
         return userDTOs;
     }
+    
+     //TODO create method findUsersCreatedByYear(Integer year)
 }
