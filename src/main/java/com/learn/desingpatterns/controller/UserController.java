@@ -83,6 +83,13 @@ public class UserController {
         return !users.isEmpty() ? ResponseEntity.ok(users) : ResponseEntity.noContent().build();
     }
     
-   //TODO create api method GET findUsersCreatedByYear(Integer year)
+
+    @GetMapping("/UserYear/{year}")
+    public ResponseEntity<List<UserDTO>> findUsersCreatedByYear(@PathVariable("year") Integer year) {
+        log.info("Entering findUserById method with id: {}", year);
+        List<UserDTO> users = userService.findUsersCreatedByYear(year);
+        log.info("Exiting findUserById method with userDTO: {}", users);
+        return !users.isEmpty() ? ResponseEntity.ok(users) : ResponseEntity.noContent().build();
+    }
     
 }
