@@ -9,4 +9,5 @@ public interface UserService {
     UserDTO findById(Integer id);
     List<UserDTO> findAll();
     List<UserDTO> findUsersCreatedToday();
+	List<UserDTO> findUsersCreatedByYear(Integer year);
 }

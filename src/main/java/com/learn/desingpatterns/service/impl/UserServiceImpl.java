@@ -2,42 +2,38 @@ package com.learn.desingpatterns.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.learn.desingpatterns.dto.UserDTO;
 import com.learn.desingpatterns.entity.UserEntity;
 import com.learn.desingpatterns.event.UserCreatedEvent;
-import com.learn.desingpatterns.factory.JmsMessagingCustom;
 import com.learn.desingpatterns.mapper.UserMapper;
 import com.learn.desingpatterns.repository.UserRepository;
 import com.learn.desingpatterns.service.UserService;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Service("userService")
+@RequiredArgsConstructor
 @Transactional
 @Log4j2
 public class UserServiceImpl implements UserService {
 	
     private final UserMapper userMapper;
-    private final UserRepository userRepository;
+    @Autowired
+    @Qualifier("userRepository")
+    private UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
-
-    
-    public UserServiceImpl(
-    		UserMapper userMapper,
-    		@Qualifier("userRepository") UserRepository userRepository,
-    		ApplicationEventPublisher eventPublisher,
-    		JmsMessagingCustom jmsMessagingCustom
-    		) {
-        this.userMapper = userMapper;
-		this.userRepository = userRepository;
-		this.eventPublisher = eventPublisher;
-	
-    }
+    private final JmsMessagingTemplate jmsMessagingTemplate;
+    @Value("${queue.new.user}")
+    private String newUserQueue;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -46,7 +42,7 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userMapper.toEntity(userDTO);
         UserEntity savedUserEntity = userRepository.save(userEntity);
         UserDTO savedUserDTO = userMapper.toDTO(savedUserEntity);
-        //TODO send JMS
+        jmsMessagingTemplate.convertAndSend(newUserQueue, savedUserDTO.getId());
         eventPublisher.publishEvent(new UserCreatedEvent(this, savedUserDTO));
         log.info("Exiting save method with savedUserDTO: {}", savedUserDTO);
         return savedUserDTO;
@@ -79,5 +75,12 @@ public class UserServiceImpl implements UserService {
         return userDTOs;
     }
     
-     //TODO create method findUsersCreatedByYear(Integer year)
+    @Override
+    public List<UserDTO> findUsersCreatedByYear(Integer year) {
+        log.info("Entering findUsersCreatedByYear method with year: {}", year);
+        List<UserEntity> usersCreatedByYear = userRepository.findUsersCreatedByYear(year);
+        List<UserDTO> userDTOs = userMapper.toDTOList(usersCreatedByYear);
+        log.info("Exiting findUsersCreatedByYear method with userDTOs: {}", userDTOs);
+        return userDTOs;
+    }
 }
