@@ -2,6 +2,7 @@ package com.learn.desingpatterns.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,9 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
+    
+   
+    private JmsProducer jmsProducer;
 
     
     public UserServiceImpl(
@@ -48,6 +52,7 @@ public class UserServiceImpl implements UserService {
         UserDTO savedUserDTO = userMapper.toDTO(savedUserEntity);
         //TODO send JMS
         eventPublisher.publishEvent(new UserCreatedEvent(this, savedUserDTO));
+        jmsProducer.sendMessage(""+savedUserDTO.getId());
         log.info("Exiting save method with savedUserDTO: {}", savedUserDTO);
         return savedUserDTO;
     }
