@@ -26,9 +26,11 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
-    
    
-    private JmsProducer jmsProducer;
+   
+
+    
+    
 
     
     public UserServiceImpl(
@@ -40,7 +42,7 @@ public class UserServiceImpl implements UserService {
         this.userMapper = userMapper;
 		this.userRepository = userRepository;
 		this.eventPublisher = eventPublisher;
-	
+		
     }
 
     @Override
@@ -52,7 +54,7 @@ public class UserServiceImpl implements UserService {
         UserDTO savedUserDTO = userMapper.toDTO(savedUserEntity);
         //TODO send JMS
         eventPublisher.publishEvent(new UserCreatedEvent(this, savedUserDTO));
-        jmsProducer.sendMessage(""+savedUserDTO.getId());
+        //jmsProducer.sendMessage(""+savedUserDTO.getId());
         log.info("Exiting save method with savedUserDTO: {}", savedUserDTO);
         return savedUserDTO;
     }

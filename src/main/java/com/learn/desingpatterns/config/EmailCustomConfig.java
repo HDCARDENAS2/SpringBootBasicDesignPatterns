@@ -9,12 +9,18 @@ import com.learn.desingpatterns.custom.EmailCustom;
 @Configuration
 public class EmailCustomConfig {
 
-	@Value("${customdata.email.endpoint}")
-	private String endPoint;
+
+	
+	@Value("${customdata.email.user}")
+	private String user;
+	@Value("${customdata.email.pass}")
+	private String pas;
+	
+
 
 	@Bean
 	EmailCustom customEmail() {
-		return new EmailCustom(endPoint);
+		return new EmailCustom(user,pas);
 	}
 	
 }
