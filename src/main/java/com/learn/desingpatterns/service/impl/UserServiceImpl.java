@@ -80,12 +80,4 @@ public class UserServiceImpl implements UserService {
     }
     
      //TODO create method findUsersCreatedByYear(Integer year)
-    @Override
-    public List<UserDTO> findUsersCreatedByYear(Integer year) {
-    	 log.info("Entering findUsersCreatedByYear method");
-        List<UserEntity> findUsersCreatedByYear = userRepository.findUsersCreatedByYear(year);
-        List<UserDTO> userDTOs = userMapper.toDTOList(findUsersCreatedByYear);
-        log.info("Exiting findUsersCreatedByYear method with userDTOs: {}", userDTOs);
-        return userDTOs;
-    }
 }
