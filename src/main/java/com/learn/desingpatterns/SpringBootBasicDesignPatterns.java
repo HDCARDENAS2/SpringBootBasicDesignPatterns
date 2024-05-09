@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jms.annotation.JmsListener;
-import org.springframework.jms.core.JmsTemplate;
 
 @SpringBootApplication
 @EnableJpaRepositories("com.learn.desingpatterns.repository")
@@ -24,11 +23,6 @@ public class SpringBootBasicDesignPatterns {
         BrokerService broker = new BrokerService();
         broker.addConnector("tcp://localhost:61616");
         return broker;
-    }
-
-    @JmsListener(destination = "foo")
-    public void listen(String in) {
-        System.out.println("Broket" + in);
     }
 
 }
