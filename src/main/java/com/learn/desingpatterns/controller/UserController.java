@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.learn.desingpatterns.dto.UserDTO;
@@ -82,7 +83,17 @@ public class UserController {
         log.info("Exiting findUsersCreatedToday method with users: {}", users);
         return !users.isEmpty() ? ResponseEntity.ok(users) : ResponseEntity.noContent().build();
     }
-    
-   //TODO create api method GET findUsersCreatedByYear(Integer year)
-    
+
+    @ApiOperation("Find users created by year")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Users found"),
+            @ApiResponse(code = 204, message = "No Content")
+    })
+    @GetMapping("/created-by-year")
+    public ResponseEntity<List<UserDTO>> findUsersCreatedByYear(@RequestParam("year") Integer year) {
+        log.info("Entering findUsersCreatedByYear method");
+        List<UserDTO> users = userService.findUsersCreatedByYear(year);
+        log.info("Exiting findUsersCreatedByYear method with users: {}", users);
+        return !users.isEmpty() ? ResponseEntity.ok(users) : ResponseEntity.noContent().build();
+    }
 }
