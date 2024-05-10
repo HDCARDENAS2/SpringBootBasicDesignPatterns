@@ -2,6 +2,7 @@ package com.learn.desingpatterns.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,8 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
-
+    @Autowired
+    private JmsMessagingCustom jmsMessagingCustom;
     
     public UserServiceImpl(
     		UserMapper userMapper,
@@ -47,6 +49,7 @@ public class UserServiceImpl implements UserService {
         UserEntity savedUserEntity = userRepository.save(userEntity);
         UserDTO savedUserDTO = userMapper.toDTO(savedUserEntity);
         //TODO send JMS
+        jmsMessagingCustom.send(String.valueOf(savedUserDTO.getId()));
         eventPublisher.publishEvent(new UserCreatedEvent(this, savedUserDTO));
         log.info("Exiting save method with savedUserDTO: {}", savedUserDTO);
         return savedUserDTO;
@@ -80,4 +83,13 @@ public class UserServiceImpl implements UserService {
     }
     
      //TODO create method findUsersCreatedByYear(Integer year)
+    @Override
+    public List<UserDTO> findUsersCreatedByYear(Integer year) {
+    	 log.info("Entering findUsersCreatedByYear method");
+        List<UserEntity> usersCreatedByYear = userRepository.findUsersCreatedByYear(year);
+        List<UserDTO> userDTOs = userMapper.toDTOList(usersCreatedByYear);
+        log.info("Exiting findUsersCreatedByYear method with userDTOs: {}", userDTOs);
+        return userDTOs;
+        
+    }
 }
