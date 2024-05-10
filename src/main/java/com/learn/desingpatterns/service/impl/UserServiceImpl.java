@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
         //TODO send JMS
         eventPublisher.publishEvent(new UserCreatedEvent(this, savedUserDTO));
         log.info("Exiting save method with savedUserDTO: {}", savedUserDTO);
-        jmsProducer.sendMessage("Parece que esto funciona.");
+        jmsProducer.sendMessage("Usuario creado. ID: " + savedUserDTO.getId());
         return savedUserDTO;
     }
 
