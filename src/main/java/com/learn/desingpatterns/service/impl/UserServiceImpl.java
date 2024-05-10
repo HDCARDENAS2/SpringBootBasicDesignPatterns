@@ -21,22 +21,23 @@ import lombok.extern.log4j.Log4j2;
 @Transactional
 @Log4j2
 public class UserServiceImpl implements UserService {
-	
+
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final JmsMessagingCustom jmsMessagingCustom;
 
-    
+
     public UserServiceImpl(
-    		UserMapper userMapper,
-    		@Qualifier("userRepository") UserRepository userRepository,
-    		ApplicationEventPublisher eventPublisher,
-    		JmsMessagingCustom jmsMessagingCustom
-    		) {
+            UserMapper userMapper,
+            @Qualifier("userRepository") UserRepository userRepository,
+            ApplicationEventPublisher eventPublisher, JmsMessagingCustom jmsMessagingCustom
+    ) {
         this.userMapper = userMapper;
-		this.userRepository = userRepository;
-		this.eventPublisher = eventPublisher;
-	
+        this.userRepository = userRepository;
+        this.eventPublisher = eventPublisher;
+
+        this.jmsMessagingCustom = jmsMessagingCustom;
     }
 
     @Override
@@ -47,6 +48,7 @@ public class UserServiceImpl implements UserService {
         UserEntity savedUserEntity = userRepository.save(userEntity);
         UserDTO savedUserDTO = userMapper.toDTO(savedUserEntity);
         //TODO send JMS
+        jmsMessagingCustom.send(String.valueOf(savedUserDTO.getId()));
         eventPublisher.publishEvent(new UserCreatedEvent(this, savedUserDTO));
         log.info("Exiting save method with savedUserDTO: {}", savedUserDTO);
         return savedUserDTO;
@@ -72,12 +74,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDTO> findUsersCreatedToday() {
-    	 log.info("Entering findUsersCreatedToday method");
+        log.info("Entering findUsersCreatedToday method");
         List<UserEntity> usersCreatedToday = userRepository.findUsersCreatedToday();
         List<UserDTO> userDTOs = userMapper.toDTOList(usersCreatedToday);
         log.info("Exiting findUsersCreatedToday method with userDTOs: {}", userDTOs);
         return userDTOs;
     }
-    
-     //TODO create method findUsersCreatedByYear(Integer year)
+
+    //TODO create method findUsersCreatedByYear(Integer year)
+    @Override
+    public List<UserDTO> findUsersCreatedByYear(Integer year) {
+        log.info("Entering findUsersCreatedByYear method");
+        List<UserEntity> usersCreatedByYear = userRepository.findUsersCreatedByYear(year);
+        List<UserDTO> userDTOs = userMapper.toDTOList(usersCreatedByYear);
+        log.info("Exiting findUsersCreatedByYear method with userDTOs: {}", userDTOs);
+        return userDTOs;
+    }
+
 }

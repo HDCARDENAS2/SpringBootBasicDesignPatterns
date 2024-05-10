@@ -6,22 +6,29 @@ import org.springframework.context.annotation.Configuration;
 
 import com.learn.desingpatterns.factory.JmsFactoryCustom;
 import com.learn.desingpatterns.factory.JmsMessagingCustom;
+import org.springframework.jms.core.JmsTemplate;
+
+import javax.jms.ConnectionFactory;
 
 @Configuration
 public class JmsCustomConfig {
 
-	@Value("${customdata.jms.topic}")
-	private String topic;
-	
-	@Bean(name = "jmsMessagingCustom")
-    JmsFactoryCustom jmsFactoryCustom() {
-    	JmsFactoryCustom jmsFactoryCustom = new JmsFactoryCustom();
-    	jmsFactoryCustom.setTopic(topic);
+    @Value("${customdata.jms.topic}")
+    private String topic;
+
+    @Bean(name = "jmsMessagingCustom")
+    JmsFactoryCustom jmsFactoryCustom(JmsTemplate jmsTemplate) {
+        JmsFactoryCustom jmsFactoryCustom = new JmsFactoryCustom(jmsTemplate);
+        jmsFactoryCustom.setTopic(topic);
         return jmsFactoryCustom;
     }
-    
+
     @Bean
-    JmsMessagingCustom jmsMessagingCustom() throws Exception {
-        return jmsFactoryCustom().getObject();
+    JmsTemplate jmsTemplate(ConnectionFactory connectionFactory) throws Exception {
+        return new JmsTemplate(connectionFactory);
+    }
+
+    JmsMessagingCustom jmsMessagingCustom(JmsTemplate jmsTemplate) throws Exception {
+        return jmsFactoryCustom(jmsTemplate).getObject();
     }
 }
