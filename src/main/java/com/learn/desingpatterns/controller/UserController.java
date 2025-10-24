@@ -82,4 +82,7 @@ public class UserController {
         log.info("Exiting findUsersCreatedToday method with users: {}", users);
         return !users.isEmpty() ? ResponseEntity.ok(users) : ResponseEntity.noContent().build();
     }
+    
+   //TODO create api method GET findUsersCreatedByYear(Integer year)
+    
 }

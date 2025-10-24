@@ -15,19 +15,19 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class EmailComponent {
 	
-	private final EmailCustom emailCustom;
+
 	@Value("${customdata.email.salesTeam}")
 	private String salesTeamEmail;
 	
     @EventListener
     public void sendEmailToNewUser(UserCreatedEvent userCreatedEvent) {
-    	emailCustom.send(userCreatedEvent.getUser().getEmail());
+    	//TODO send a real Email to user
     	log.info("Email sent to new user {}", userCreatedEvent.getUser().getName());	
     }
     
     @EventListener
     public void sendEmailToSalesTeam(UserCreatedEvent userCreatedEvent) {
-    	emailCustom.send(salesTeamEmail);
+    	//TODO send a real Email to sales team
     	log.info("Email sent to sales team user {}", userCreatedEvent.getUser().getName());
     }
     
