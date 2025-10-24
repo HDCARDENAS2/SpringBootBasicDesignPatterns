@@ -9,9 +9,9 @@
 	<named-native-query name="queries.user.findUsersCreatedToday"
 	                 result-class="com.learn.desingpatterns.entity.UserEntity">		
 		<query>
-			 <![CDATA[
-			    SELECT * FROM user_app WHERE DATE(created_at) = CURRENT_DATE
-			 ]]>
+			<![CDATA[
+				SELECT * FROM user_app WHERE CAST(created_at AS DATE) = CURRENT_DATE
+			]]>
 		</query>
 	</named-native-query>
 		 
@@ -19,7 +19,7 @@
 	                 result-class="com.learn.desingpatterns.entity.UserEntity">		
 		<query>
 			 <![CDATA[
-			    SELECT * FROM user_app WHERE date_part('year', created_at) = :year
+				SELECT * FROM user_app WHERE YEAR(created_at) = :year
 			 ]]>
 		</query>
 	</named-native-query>
