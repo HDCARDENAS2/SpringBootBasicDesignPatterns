@@ -22,6 +22,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -83,6 +84,18 @@ public class UserController {
         return !users.isEmpty() ? ResponseEntity.ok(users) : ResponseEntity.noContent().build();
     }
     
-   //TODO create api method GET findUsersCreatedByYear(Integer year)
+   //CHOY:: create api method GET findUsersCreatedByYear(Integer year)
+    @ApiOperation("Buscar usuarios para el año: {year}")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Users found"),
+            @ApiResponse(code = 204, message = "No Content")
+    })
+    @GetMapping("/created-by-year/{year}")
+    public ResponseEntity<List<UserDTO>> findUsersCreatedByYear(@PathVariable("year") Integer year) {
+        log.info("Entering findUsersCreatedByYear method with year: {}", year);
+        List<UserDTO> users = userService.findUsersCreatedByYear(year);
+        log.info("Exiting findUsersCreatedByYear method with users: {}", users);
+        return !users.isEmpty() ? ResponseEntity.ok(users) : ResponseEntity.noContent().build();
+    }
     
 }
